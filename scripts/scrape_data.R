@@ -9,5 +9,14 @@ all.episodes <- substring(main.page, episode.start.inds, episode.start.inds + at
 # Scrape episode scripts
 all.urls <- sprintf("http://www.springfieldspringfield.co.uk/view_episode_scripts.php?tv-show=the-simpsons&episode=%s", all.episodes)
 html.code <- sapply(all.urls, getURL)
-rows <- strsplit(html.code, "\n")
-scripts <- sapply(rows, function(x) x[203])
+html.code.split <- strsplit(html.code, "\n")
+scripts <- sapply(html.code.split, function(x) x[203])
+
+cleanScript <- function(char){
+  cleaned <- gsub("\\t|\\r|\\[[[:alnum:]|[:space:]]*\\]|<br>", " ", char)
+  cleaned <- gsub("-|\\.|\\?|\"|\'\'|!", " ", cleaned)
+  cleaned <- gsub("[[:space:]]{2,}", " ", cleaned)
+  cleaned <- tolower(cleaned)
+  return(cleaned)
+}
+gsub("\\[[[:alnum:]|[:space:]]*\\]", " ", "Homer, when you forgive someone[br]you can't throw it back at them like that.<br>\r \r Aw, what a gyp.<br>\r \r - Mmm.<br>[br]- Remember when I--\r \r - Homer![br]- Oh, yeah.<br> I forgot already.<br>\r \r    <br> [ Groans ]- Well, that's nothing,because you have a gambling problem!")
