@@ -29,3 +29,6 @@ cleanScript <- function(char){
   return(cleaned)
 }
 scripts.clean <- cleanScript(scripts)
+
+# Save data
+save(scripts.clean, html.code, all.episodes, file="data/scripts.RData")
