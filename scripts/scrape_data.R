@@ -2,17 +2,29 @@
 library(RCurl)
 
 # Get list of episodes
-main.page <- getURL("http://www.springfieldspringfield.co.uk/episode_scripts.php?tv-show=the-simpsons")
-episode.start.inds <- gregexpr("s[0-9]{2}e[0-9]{2}", main.page)[[1]]
-all.episodes <- substring(main.page, episode.start.inds, episode.start.inds + attr(episode.start.inds, "match.length") - 1)
+scrapeEpisodeIDs <- function(){
+  main.page <- getURL("http://www.springfieldspringfield.co.uk/episode_scripts.php?tv-show=the-simpsons")
+  episode.start.inds <- gregexpr("s[0-9]{2}e[0-9]{2}", main.page)[[1]]
+  episode.ids <- substring(main.page, episode.start.inds, episode.start.inds + attr(episode.start.inds, "match.length") - 1)
+  return(episode.ids)
+}
 
-# Scrape episode scripts
-all.urls <- sprintf("http://www.springfieldspringfield.co.uk/view_episode_scripts.php?tv-show=the-simpsons&episode=%s", all.episodes)
-html.code <- sapply(all.urls, getURL)
-html.code.split <- strsplit(html.code, "\n")
-scripts <- sapply(html.code.split, function(x) x[203])
+# Scrape episode pages
+scrapePages <- function(episode.ids){
+  all.urls <- sprintf("http://www.springfieldspringfield.co.uk/view_episode_scripts.php?tv-show=the-simpsons&episode=%s", episode.ids)
+  html.code <- sapply(all.urls, getURL)
+  return(html.code)
+}
 
-# Clean scripts
+# Extract and clean scripts
+extractScripts <- function(html.code){
+  html.code.split <- strsplit(html.code, "\n")
+  scripts <- sapply(html.code.split, function(x) x[203])
+  scripts.clean <- cleanScript(scripts)
+  return(scripts.clean)
+}
+
+# Function to clean scripts
 cleanScript <- function(char){
   char <- iconv(char, "latin1", "ASCII", "")
   end.intro <- regexpr("\t\t\t *D'oh!|\\(tires screeching\\)\r  D'oh!|\r \r D'oh!|\t\t\t1\r D'oh!\r|\r  D'oh!\r|\\(playing the blues\\) D'oh!|D'oh! \\(tires screech|\\[ Groans \\]\r - D'oh!|\\[ Tires Screeching \\]\r D'oh!|\\(gasps\\) D'oh!|\t\t\tAh! D'oh!|\t\t\tOoh! D'oh! * \\)*|\t\t\t\r D'oh!|\r \r - D'oh!", substring(char, 1, 250), perl=T)
@@ -28,7 +40,3 @@ cleanScript <- function(char){
   cleaned[nchar(cleaned) < 10000] <- NA
   return(cleaned)
 }
-scripts.clean <- cleanScript(scripts)
-
-# Save data
-save(scripts.clean, html.code, all.episodes, file="data/scripts.RData")
