@@ -17,10 +17,11 @@ scrapePages <- function(episode.ids){
 }
 
 # Extract and clean scripts
-extractScripts <- function(html.code){
+extractScripts <- function(html.code, episode.ids){
   html.code.split <- strsplit(html.code, "\n")
   scripts <- sapply(html.code.split, function(x) x[203])
   scripts.clean <- cleanScript(scripts)
+  names(scripts.clean) <- episode.ids
   return(scripts.clean)
 }
 
