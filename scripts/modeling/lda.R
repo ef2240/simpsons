@@ -1,8 +1,6 @@
-# Load packages
+# Load package
 library(topicmodels)
-library(tm)
 
 # Fit LDA
-c <- Corpus(VectorSource(scripts))
-dtm <- DocumentTermMatrix(c)
-lda <- LDA(dtm, k=50)
+lda.model <- LDA(dtm, k=50)
+terms(lda.model, 5)
