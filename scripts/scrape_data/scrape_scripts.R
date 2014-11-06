@@ -30,7 +30,7 @@ cleanScript <- function(char){
   char <- iconv(char, "latin1", "ASCII", "")
   end.intro <- regexpr("\t\t\t *D'oh!|\\(tires screeching\\)\r  D'oh!|\r \r D'oh!|\t\t\t1\r D'oh!\r|\r  D'oh!\r|\\(playing the blues\\) D'oh!|D'oh! \\(tires screech|\\[ Groans \\]\r - D'oh!|\\[ Tires Screeching \\]\r D'oh!|\\(gasps\\) D'oh!|\t\t\tAh! D'oh!|\t\t\tOoh! D'oh! * \\)*|\t\t\t\r D'oh!|\r \r - D'oh!", substring(char, 1, 250), perl=T)
   char <- substring(char, end.intro + attr(end.intro, "match.length"))
-  cleaned <- gsub("\\t|\\r|\\[br\\]|<br>", " ", char, perl=T)
+  cleaned <- gsub("\\t|\\r|\\[br\\]|<br>|\\|", " ", char, perl=T)
   cleaned <- gsub("\\[.*?\\]|\\(.*?\\)", " ", cleaned, perl=T)
   cleaned <- gsub("[[:punct:]]+ ", " ", cleaned, perl=T)
   cleaned <- gsub("-|\"|\'\'", " ", cleaned, perl=T)
@@ -38,6 +38,6 @@ cleanScript <- function(char){
   cleaned <- gsub("[[:blank:]]+$|^[[:blank:]]+", "", cleaned, perl=T)
   cleaned <- tolower(cleaned)
   cleaned <- gsub(" shh$", "", cleaned, perl=T)
-  cleaned[nchar(cleaned) < 10000] <- NA
+  cleaned[nchar(cleaned) < 1000] <- NA
   return(cleaned)
 }
