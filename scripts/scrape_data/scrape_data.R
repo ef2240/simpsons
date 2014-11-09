@@ -1,18 +1,17 @@
-# Scrape and clean scripts
-source("scripts/scrape_data/scrape_scripts.R")
-episode.ids <- scrapeEpisodeIDs()
-episode.webpages <- scrapePages(episode.ids)
-scripts <- extractScripts(episode.webpages, episode.ids)
-
-# Remove missing scripts
-scripts <- scripts[!is.na(scripts)]
-
 # Scrape episode info
 source("scripts/scrape_data/scrape_episode_info.R")
 seasons <- 1:25
 episode.dfs <- scrapeInfo(seasons)
 episode.info <- mapply(FUN=cleanDFs, episode.dfs, seasons, SIMPLIFY=F)
 episode.info <- do.call(rbind, episode.info)
+
+# Scrape and clean scripts
+source("scripts/scrape_data/scrape_scripts.R")
+episode.webpages <- scrapePages(episode.info$episode.id)
+scripts <- extractScripts(episode.webpages, episode.info$episode.id)
+
+# Remove missing scripts
+scripts <- scripts[!is.na(scripts)]
 
 # Merge scripts with episode info
 scripts.df <- data.frame(episode.id=names(scripts), script=scripts, stringsAsFactors=F)

@@ -1,14 +1,6 @@
 # Load package
 library(RCurl)
 
-# Get list of episodes
-scrapeEpisodeIDs <- function(){
-  main.page <- getURL("http://www.springfieldspringfield.co.uk/episode_scripts.php?tv-show=the-simpsons")
-  episode.start.inds <- gregexpr("s[0-9]{2}e[0-9]{2}", main.page)[[1]]
-  episode.ids <- substring(main.page, episode.start.inds, episode.start.inds + attr(episode.start.inds, "match.length") - 1)
-  return(episode.ids)
-}
-
 # Scrape episode pages
 scrapePages <- function(episode.ids){
   all.urls <- sprintf("http://www.springfieldspringfield.co.uk/view_episode_scripts.php?tv-show=the-simpsons&episode=%s", episode.ids)
