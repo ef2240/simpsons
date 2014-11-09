@@ -3,7 +3,7 @@ library(tm)
 library(slam)
 
 # Create corpus
-c <- Corpus(VectorSource(scripts))
+c <- Corpus(VectorSource(episode.scripts$script))
 
 # Create list of stopwords
 dtm <- DocumentTermMatrix(c)
