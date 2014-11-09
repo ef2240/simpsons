@@ -1,10 +1,21 @@
 # Load package
 library(tm)
+library(slam)
 
-# Fit document term matrix
+# Create corpus
 c <- Corpus(VectorSource(scripts))
-dtm <- DocumentTermMatrix(c, control=list(stopwords=T, weighting=weightTfIdf))
+
+# Create list of stopwords
+dtm <- DocumentTermMatrix(c)
+num.eps <- colapply_simple_triplet_matrix(dtm, function(x) sum(x > 0))
+most.common.words <- names(sort(num.eps, decreasing = T)[1:250])
+custom.stopwords <- unique(c(most.common.words, stopwords("SMART")))
+
+# Find document term matrix
+dtm <- DocumentTermMatrix(c, list(stopwords=custom.stopwords, removeNumbers=T))
+
+# Find tf-idf
+tf.idf <- DocumentTermMatrix(c, control=list(stopwords=custom.stopwords, weighting=weightTfIdf))
 
 # Find top terms
-top.terms <- lapply(rowapply_simple_triplet_matrix(dtm, function(x) which(x > 0.02)), function(x) colnames(dtm)[x])
-top.terms[[176]]
+top.terms <- lapply(rowapply_simple_triplet_matrix(tf.idf, function(x) which(x > 0.03)), function(x) colnames(tf.idf)[x])
