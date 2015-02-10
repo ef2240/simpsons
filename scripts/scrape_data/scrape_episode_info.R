@@ -15,11 +15,12 @@ cleanDFs <- function(df, season){
   rows <- df[seq(1, nrow(df), 2), ]
   descs.cleaned <- gsub("\\[.+?\\]", "", descs)
   episode.id <- sprintf("s%02de%02d", season, as.numeric(rows$"No. in\nseason"))
+  title <- gsub("\"", "", rows$Title)
   df.info <- data.frame(episode.id,
                         season,
                         num.in.season=as.numeric(rows$"No. in\nseason"),
                         num.in.series=as.numeric(rows$"No. in\nseries"),
-                        title=rows$Title,
+                        title,
                         description=descs.cleaned,
                         stringsAsFactors=F
   )
